@@ -1,0 +1,14 @@
+version: "2.0"
+services:
+  katsdpbase:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: katsdpbase
+    image: sdp-docker-registry.kat.ac.za:5000/katsdpbase
+    network_mode: host
+    restart: "no"
+    hostname: katsdpbase
+    volumes:
+      - /var/kat/archive2:/var/kat/archive2:ro

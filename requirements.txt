@@ -1,0 +1,17 @@
+-c https://raw.githubusercontent.com/ska-sa/katsdpdockerbase/master/docker-base-build/base-requirements.txt
+
+numpy
+astropy
+numba
+scipy
+typing_extensions
+
+# TODO fill this in. List direct requirements (from setup.py). Indirect
+# requirements need only be listed if the URL above does not specify a default
+# version, in which case the requirement must be listed with a pin version.
+# For GPU-accelerated packages, also add this line to the top.
+# -c https://raw.githubusercontent.com/ska-sa/katsdpdockerbase/master/docker-base-gpu-build/requirements.txt
+#
+# The convention is to add PyPI requirements first, alphabetically, then
+# internal packages installed from Github URLs. For the latter, use https URLs
+# for public repositories so that one does not need an SSH key to install.
