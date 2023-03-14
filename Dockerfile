@@ -7,7 +7,6 @@ USER root
 #    apt-get install -y gnome-todo apt-utils cmake make wget git
 
 ######################################################################
-# DDFacet install
 
 #Package dependencies
 COPY apt.sources.list /etc/apt/sources.list
@@ -56,19 +55,13 @@ ENV DEB_DEPENCENDIES \
     liblog4cplus-dev \
     libhdf5-dev \
     libncurses5-dev \
-    #libsofa1-dev \
     flex \
     bison \
     libbison-dev \
-    # Reference image generation dependencies
     make
 
 RUN apt-get update
 RUN apt-get install -y $DEB_DEPENCENDIES
-
-######################################################################
-
-
 
 #####################################################################
 ## BUILD CASACORE FROM SOURCE
@@ -105,7 +98,8 @@ ENV PATH="$PATH_PYTHON3" VIRTUAL_ENV="$VIRTUAL_ENV_PYTHON3"
 RUN python -m pip install --upgrade pip
 RUN python -m pip install pip-tools==6.6.1 
 COPY --chown=kat:kat requirements.txt /tmp/install/requirements.txt
-RUN install_pinned.py -r /tmp/install/requirements.txt
+#RUN install_pinned.py -r /tmp/install/requirements.txt
+RUN pip install -r /tmp/install/requirements.txt
 
 # Install the current package
 COPY --chown=kat:kat . /tmp/install/katsdpbase
@@ -122,5 +116,13 @@ LABEL maintainer="sdpdev+katsdpbase@ska.ac.za"
 COPY --from=build --chown=kat:kat /home/kat/ve3 /home/kat/ve3
 ENV PATH="$PATH_PYTHON3" VIRTUAL_ENV="$VIRTUAL_ENV_PYTHON3"
 
-ENTRYPOINT ["/bin/bash"]
-CMD ["who"]
+RUN mkdir -p /home/kat/data
+VOLUME ["/home/kat/data"]
+
+USER kat
+WORKDIR /home/kat/data
+# Run run.sh and then go to interactive shell
+#CMD ["/bin/bash", "--rcfile", "/run.sh", "-i"]
+
+#ENTRYPOINT ["/bin/bash", "-c", "-i"]
+#CMD ["python", "mvftoms.py"]

@@ -1,0 +1,46 @@
+ARG KATSDPDOCKERBASE_REGISTRY=quay.io/ska-sa
+
+FROM $KATSDPDOCKERBASE_REGISTRY/docker-base-build as build
+
+USER root
+RUN apt-get update && \
+    apt-get install -y gnome-todo apt-utils cmake make wget git
+
+######################################################################
+
+# Switch to Python 3 environment
+USER kat
+ENV PATH="$PATH_PYTHON3" VIRTUAL_ENV="$VIRTUAL_ENV_PYTHON3"
+
+# Install dependencies
+RUN python -m pip install --upgrade pip
+RUN python -m pip install pip-tools 
+COPY --chown=kat:kat requirements.txt /tmp/install/requirements.txt
+#RUN install_pinned.py -r /tmp/install/requirements.txt
+RUN pip install -r /tmp/install/requirements.txt
+
+# Install the current package
+COPY --chown=kat:kat . /tmp/install/katsdpbase
+WORKDIR /tmp/install/katsdpbase
+RUN python ./setup.py clean
+RUN pip install --no-deps .
+RUN pip check
+
+#######################################################################
+
+FROM $KATSDPDOCKERBASE_REGISTRY/docker-base-runtime
+LABEL maintainer="sdpdev+katsdpbase@ska.ac.za"
+
+COPY --from=build --chown=kat:kat /home/kat/ve3 /home/kat/ve3
+ENV PATH="$PATH_PYTHON3" VIRTUAL_ENV="$VIRTUAL_ENV_PYTHON3"
+
+RUN mkdir -p /home/kat/data
+VOLUME ["/home/kat/data"]
+
+USER kat
+WORKDIR /home/kat/data
+# Run run.sh and then go to interactive shell
+#CMD ["/bin/bash", "--rcfile", "/run.sh", "-i"]
+
+#ENTRYPOINT ["/bin/bash", "-c", "-i"]
+#CMD ["python", "mvftoms.py"]
