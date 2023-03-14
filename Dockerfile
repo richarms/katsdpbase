@@ -11,12 +11,6 @@ USER root
 #Package dependencies
 COPY apt.sources.list /etc/apt/sources.list
 
-#Setup environment
-ENV DDFACET_TEST_DATA_DIR /test_data
-ENV DDFACET_TEST_OUTPUT_DIR /test_output
-
-# Support large mlocks
-RUN echo "*        -   memlock     unlimited" > /etc/security/limits.conf
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBIAN_PRIORITY critical
 ENV GNUCOMPILER 7
